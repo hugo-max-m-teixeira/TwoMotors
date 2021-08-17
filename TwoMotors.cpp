@@ -4,7 +4,7 @@ TwoMotors::TwoMotors(DC_motor_controller* motor1, DC_motor_controller* motor2){	
 	this->m1=motor1; this->m2=motor2;
 }
 
-void TwoMotors::together(float vel, float rot){ // Para a movimentação dos dois motores em uma mesma velocidade e com o mesmo valor de rotações
+void TwoMotors::together(float vel, float rot=0){ // Para a movimentação dos dois motores em uma mesma velocidade e com o mesmo valor de rotações
 	m1->resetForGyrate();
 	m2->resetForGyrate();
 	while(m1->canRun() || m2->canRun()){

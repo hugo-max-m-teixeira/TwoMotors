@@ -18,7 +18,7 @@ public:
 	DC_motor_controller* m2 =new DC_motor_controller();
 	
 	TwoMotors(DC_motor_controller* motor1, DC_motor_controller* motor2);
-	void together(float vel, float rot);
+	void together(float vel, float rot=0);
 	void together(float vel1, float rot1, float vel2, float rot2);
 	
 	
