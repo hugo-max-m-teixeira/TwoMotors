@@ -20,9 +20,14 @@ void TwoMotors::setGyreDegreesRatio(float rot, float ang){
 void TwoMotors::together(float vel, float rot=0){ // Para a movimentação dos dois motores em uma mesma velocidade e com o mesmo valor de rotações
 	m1->resetForGyrate();
 	m2->resetForGyrate();
-	while(m1->canRun() || m2->canRun()){
-		m1->gyrate(vel, rot);
-		m2->gyrate(vel, rot);
+	if(rot != 0){
+		while(m1->canRun() || m2->canRun()){
+			m1->gyrate(vel, rot);
+			m2->gyrate(vel, rot);
+		}
+	} else {
+		m1->walk(vel, 0);
+		m2->walk(vel, 0);
 	}
 	m1->run(0);
 	m2->run(0);
