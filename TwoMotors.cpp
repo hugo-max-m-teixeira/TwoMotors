@@ -25,6 +25,15 @@ void TwoMotors::together(float vel, float rot=0){ // Para a movimentação dos d
 			m1->gyrate(vel, rot);
 			m2->gyrate(vel, rot);
 		}
+		m1->resetForGyrate();
+		m2->resetForGyrate();
+		unsigned int lastTime = millis();
+		while ((millis() - lastTime) < 250){
+			m1->stop();
+			m2->stop();
+		}
+		m1->resetForGyrate(); m1->run(0);
+		m2->resetForGyrate(); m2->run(0);
 	} else {
 		m1->walk(vel, 0);
 		m2->walk(vel, 0);
