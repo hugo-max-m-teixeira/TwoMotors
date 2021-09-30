@@ -31,7 +31,6 @@ void TwoMotors::together(float vel, float rot){ // Para a movimentação dos doi
 			m1->gyrate(vel, rot);
 			m2->gyrate(vel, rot);
 		}
-<<<<<<< HEAD
 		m1->resetForGyrate();
 		m2->resetForGyrate();
 		unsigned int lastTime = millis();
@@ -41,10 +40,6 @@ void TwoMotors::together(float vel, float rot){ // Para a movimentação dos doi
 		}
 		m1->resetForGyrate(); m1->run(0);
 		m2->resetForGyrate(); m2->run(0);
-=======
-		m1->run(0);
-		m2->run(0);
->>>>>>> 2566c0c54a5e57a3705aeb06d7fe8447c2e881c4
 	} else {
 		m1->walk(vel);
 		m2->walk(vel);
