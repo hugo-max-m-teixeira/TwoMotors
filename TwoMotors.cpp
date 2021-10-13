@@ -57,15 +57,16 @@ void TwoMotors::together(float vel1, float rot1, float vel2, float rot2){	// Par
 void TwoMotors::turnDegree(float vel, float degrees){ // For turn angles (in degrees)
 	resetMotors();
 	float rot = degrees*rot_per_degree; 				// Necessary rotations
-	if(degrees > 0){
+	//if(degrees > 0){
 		together(vel, rot, -vel, -rot);						// Compute RPM, PID and run
-	}/* else if(degrees < 0){
-		together(-vel, -rot, vel, rot);
-	}*/
+	//} else if(degrees < 0){
+	//	together(-vel, -rot, vel, rot);
+	//}*/
 }
 
 void TwoMotors::stop(unsigned int t=0){
 	if(t <= m1->getRefreshTime()){								// If "t" time is too small...
+		resetMotors();
 		m1->run(0); m2->run(0);											// Just turn off the motors
 	} else {
 		unsigned int lastT_local = millis();					// Set current time

@@ -1,2 +1,4 @@
 TwoMotors	KEYWORD1
 together	KEYWORD2
+stop	KEYWORD2
+turnDegree	KEYWORD2
