@@ -33,12 +33,12 @@ void TwoMotors::together(float vel, float rot){ // Para a movimentação dos doi
 		resetMotors();
 
 		unsigned int lastTime = millis();
-		while ((millis() - lastTime) < 250){
-			m1->stop();
-			m2->stop();
+		while ((millis() - lastTime) < 100){
+			m1->stop_both();
+			m2->stop_both();
 		}
+		stop(200);
 		resetMotors();
-		stop();
 	} else {
 		m1->walk(vel);
 		m2->walk(vel);
@@ -57,22 +57,18 @@ void TwoMotors::together(float vel1, float rot1, float vel2, float rot2){	// Par
 void TwoMotors::turnDegree(float vel, float degrees){ // For turn angles (in degrees)
 	resetMotors();
 	float rot = degrees*rot_per_degree; 				// Necessary rotations
-	//if(degrees > 0){
-		together(vel, rot, -vel, -rot);						// Compute RPM, PID and run
-	//} else if(degrees < 0){
-	//	together(-vel, -rot, vel, rot);
-	//}*/
+	together(vel, rot, -vel, -rot);						// Compute RPM, PID and run
 }
 
-void TwoMotors::stop(unsigned int t=0){
+void TwoMotors::stop(unsigned int t=100){
 	if(t <= m1->getRefreshTime()){								// If "t" time is too small...
 		resetMotors();
-		m1->run(0); m2->run(0);											// Just turn off the motors
+		m1->run(0); m2->run(0);									// Just turn off the motors
 	} else {
 		unsigned int lastT_local = millis();					// Set current time
 		resetMotors();
-		while((millis()-lastT_local) < t){					// During "t" time
-			m1->stop_both(); m2->stop_both(); 				// Stop both motors
+		while((millis()-lastT_local) < t){						// During "t" time
+			m1->stop_both(); m2->stop_both(); 					// Stop both motors
 		}
 		m1->run(0); m2->run(0); 										// Disable the motors
 	}

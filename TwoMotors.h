@@ -24,7 +24,7 @@ public:
 	void together(float vel1, float rot1, float vel2, float rot2);
 	void setGyreDegreesRatio(float rot, float ang);
 	void turnDegree(float vel, float deg);
-	void stop(unsigned int t=0);
+	void stop(unsigned int t=100);
 	void reset();
 
 private:
