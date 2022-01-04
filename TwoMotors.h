@@ -26,6 +26,8 @@ public:
 	void turnDegree(float vel, float deg);
 	void stop(unsigned int t=0);
 	void reset();
+	void run(int pwm);
+	void run(int pwm1, int pwm2);
 
 private:
 	float rot_per_degree;

@@ -22,6 +22,15 @@ void TwoMotors::together(float vel){
 	m2->walk(vel);
 }
 
+void TwoMotors::run(int pwm){
+	m1->run(pwm);
+	m2->run(pwm);
+}
+
+void TwoMotors::run(int pwm1, int pwm2){
+	m1->run(pwm1);
+	m2->run(pwm2);
+}
 
 void TwoMotors::together(float vel, float rot){ // Para a movimentação dos dois motores em uma mesma velocidade e com o mesmo valor de rotações
 	if(rot != 0){
