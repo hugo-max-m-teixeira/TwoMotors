@@ -28,6 +28,7 @@ public:
 	void reset();
 	void run(int pwm);
 	void run(int pwm1, int pwm2);
+	void ifNegativeAllNegative(float &val_1, float &val_2);
 
 private:
 	float rot_per_degree;

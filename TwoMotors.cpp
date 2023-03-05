@@ -90,3 +90,10 @@ void TwoMotors::resetMotors(){
 void TwoMotors::reset(){
 	resetMotors(); 				// Another name for the function resetMotors()
 }
+
+void TwoMotors::ifNegativeAllNegative(float &val_1, float &val_2){
+	if ((val_1 < 0) || (val_2 < 0)){ // Garante que os dois valores sejam negativos no caso de um dos valores ser negativo.
+  		val_1 = -abs(val_1);
+  		val_2 = -abs(val_2);
+  	}
+}
