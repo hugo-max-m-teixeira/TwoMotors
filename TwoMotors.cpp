@@ -13,6 +13,10 @@ TwoMotors::TwoMotors(DC_motor_controller* motor1, DC_motor_controller* motor2){	
 	this->m1=motor1; this->m2=motor2;
 }
 
+TwoMotors::TwoMotors(DC_motor_controller &motor1, DC_motor_controller &motor2){	//Construtor que recebe dois objetos do tipo DC_motor_controller (que serão sincronizados)
+	this->m1=&motor1; this->m2=&motor2;
+}
+
 void TwoMotors::setGyreDegreesRatio(float rot, float ang){
 	this-> rot_per_degree = rot/ang;
 }
@@ -36,8 +40,8 @@ void TwoMotors::together(float vel, float rot){ // Para a movimentação dos doi
 	if(rot != 0){
 		resetMotors();
 		while(m1->canRun() || m2->canRun()){
-			m1->gyrate(vel, rot);
-			m2->gyrate(vel, rot);
+			if(m1->canRun())	m1->gyrate(vel, rot);
+			if(m2->canRun())	m2->gyrate(vel, rot);
 		}
 		resetMotors();
 
@@ -60,7 +64,7 @@ void TwoMotors::together(float vel1, float rot1, float vel2, float rot2){	// Par
 		m1->gyrate(vel1, rot1);										// compute RPM, PID and run...
 		m2->gyrate(vel2, rot2);
 	}
-	stop();
+	stop_vel(vel1, vel2);
 }
 
 void TwoMotors::turnDegree(float vel, float degrees){ // For turn angles (in degrees)
@@ -69,18 +73,34 @@ void TwoMotors::turnDegree(float vel, float degrees){ // For turn angles (in deg
 	together(vel, rot, -vel, -rot);						// Compute RPM, PID and run
 }
 
-void TwoMotors::stop(unsigned int t=100){
-	if(t <= m1->getRefreshTime()){								// If "t" time is too small...
+void TwoMotors::stop(unsigned int time/*= 100*/){
+	if(time <= m1->getRefreshTime()){								// If "t" time is too small...
 		resetMotors();
 		m1->run(0); m2->run(0);									// Just turn off the motors
 	} else {
-		unsigned int lastT_local = millis();					// Set current time
 		resetMotors();
-		while((millis()-lastT_local) < t){						// During "t" time
-			m1->stop_both(); m2->stop_both(); 					// Stop both motors
+		m1->can_stop = true;
+		m2->can_stop = true;
+		while(m1->can_stop || m2->can_stop){
+			if(can_stop_vel){
+				if(m1->can_stop)	m1->stop_both(stop_time[0]);
+				if(m2->can_stop)	m2->stop_both(stop_time[1]);
+			} else {
+				if(m1->can_stop)	m1->stop_both(time);
+				if(m2->can_stop)	m2->stop_both(time);
+			}		
 		}
-		m1->run(0); m2->run(0); 										// Disable the motors
+		if(can_stop_vel) can_stop_vel = false;
+		m1->reset();
+		m2->reset(); 										// Disable the motors
 	}
+}
+
+void TwoMotors::stop_vel(unsigned int vel1, unsigned int vel2){
+	stop_time[0] = m1->anti_inertia_time(vel1);
+	stop_time[1] = m2->anti_inertia_time(vel2);
+	can_stop_vel = true;
+	stop();
 }
 
 void TwoMotors::resetMotors(){
