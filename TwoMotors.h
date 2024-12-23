@@ -20,23 +20,21 @@ public:
 
 	TwoMotors(DC_motor_controller* motor1, DC_motor_controller* motor2);
 	TwoMotors(DC_motor_controller &motor1, DC_motor_controller &motor2);
-	void together(float vel);
-	void together(float vel, float rot);
+	void together(float velocity, float rotations = 0);
 	void together(float vel1, float rot1, float vel2, float rot2);
-	void setGyreDegreesRatio(float rot, float ang);
-	void turnDegree(float vel, float deg);
+	/*void setGyreDegreesRatio(float rot, float ang);
+	void turnDegree(float vel, float deg);*/
 	void stop(unsigned int time=100);
-	void stop_vel(unsigned int vel1, unsigned int vel2);
+	//void stop_vel(unsigned int vel1, unsigned int vel2);
 	void reset();
 	void run(int pwm);
-	void run(int pwm1, int pwm2);
-	void ifNegativeAllNegative(float &val_1, float &val_2);
+	void run(int pwm1, int pwm2 = 0);
 
 private:
 	float rot_per_degree;
 	unsigned int stop_time[2];
 	bool can_stop_vel = false;
-	void resetMotors();
+	void ifNegativeAllNegative(float &val_1, float &val_2);
 };
 
 #endif
