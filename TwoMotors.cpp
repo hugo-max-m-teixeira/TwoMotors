@@ -34,19 +34,26 @@ void TwoMotors::together(float velocity, float rotations/* = 0*/){ // Para a mov
 	if(rotations != 0){
 		unsigned long 	startTime = millis(),
 						elapsedTimeSinseStart;
-		bool m1CanRun, m2CanRun;
+		bool	m1CanRun = true,
+				m2CanRun = true;
 		reset();
 		do{
 			elapsedTimeSinseStart = millis() - startTime;
-			bool m1CanRun = m1->gyrate(velocity, rotations, elapsedTimeSinseStart);
-			bool m2CanRun = m2->gyrate(velocity, rotations, elapsedTimeSinseStart);
 			
-			if(!m1CanRun){
+			if(m1CanRun){
+				m1CanRun = m1->gyrate(velocity, rotations, elapsedTimeSinseStart);
+			} else {
 				m1->stop();
 			}
-			if(!m2CanRun){
+			
+			if(m2CanRun){
+				m2CanRun = m2->gyrate(velocity, rotations, elapsedTimeSinseStart);
+			} else {
 				m2->stop();
 			}
+			//Serial.println("Can run M1: " + String(m1CanRun) + "\t can rum M2: " + String(m2CanRun));
+			//Serial.print("Rotations done since start M1: " + (String)(m1->pulsesToRotations(m1->pulses[1])));
+			//Serial.println("\tRotations done since start M2: " + (String)(m2->pulsesToRotations(m2->pulses[1])));
 		} while(m1CanRun || m2CanRun);
 		
 		reset();
