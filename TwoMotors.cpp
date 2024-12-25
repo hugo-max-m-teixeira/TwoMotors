@@ -32,22 +32,43 @@ void TwoMotors::run(int pwm1, int pwm2){
 
 void TwoMotors::together(float velocity, float rotations/* = 0*/){ // Para a movimentação dos dois motores em uma mesma velocidade e com o mesmo valor de rotações
 	if(rotations != 0){
-		unsigned long 	startTime = millis(),
-						elapsedTimeSinseStart;
+		unsigned long 	startTime;
 		bool	m1CanRun = true,
 				m2CanRun = true;
-		reset();
+		/*		
+		bool accelTriangleM1 = ((pow(abs(velocity), 2)/(m1->getAcceleration()*60.0)) > abs(rotations)) ? true : false;
+		bool accelTriangleM2 = ((pow(abs(velocity), 2)/(m2->getAcceleration()*60.0)) > abs(rotations)) ? true : false;
+		
+		bool	m1CanAccelerate, m2CanAccelerate;
+		
+		m1->accelerateProcess(1,1,1, true); // Resets time variable
+		m2->accelerateProcess(1,1,1, true); // Resets time variable
+		
+		startTime = millis();
+		Serial.println("Started accelerating both!");
 		do{
-			elapsedTimeSinseStart = millis() - startTime;
-			
+			m1CanAccelerate = m1->accelerateProcess(velocity, m1->getAcceleration(), startTime) && !accelTriangleM1;
+			m2CanAccelerate = m2->accelerateProcess(velocity, m2->getAcceleration(), startTime) && !accelTriangleM2;	
+		}while(m1CanAccelerate || m2CanAccelerate);
+		Serial.println("Ended accelerating both! Preparing to start gyrate() on both");
+		reset();
+		
+		*/	
+		m1->gyrate(1,1,1, true); // Resets time variable
+		m2->gyrate(1,1,1, true); // Resets time variable
+		startTime = millis();
+		
+		do{
+			//Serial.println(" 1-1 1-1 -1-M1 data below:");
 			if(m1CanRun){
-				m1CanRun = m1->gyrate(velocity, rotations, elapsedTimeSinseStart);
+				m1CanRun = m1->gyrate(velocity, rotations, startTime);
 			} else {
 				m1->stop();
 			}
-			
+			//Serial.println("M1 can run: " + String(m1CanRun));
+			//Serial.println(" 2-2 2-2 -2-M2 data below:");
 			if(m2CanRun){
-				m2CanRun = m2->gyrate(velocity, rotations, elapsedTimeSinseStart);
+				m2CanRun = m2->gyrate(velocity, rotations, startTime);
 			} else {
 				m2->stop();
 			}
@@ -55,16 +76,8 @@ void TwoMotors::together(float velocity, float rotations/* = 0*/){ // Para a mov
 			//Serial.print("Rotations done since start M1: " + (String)(m1->pulsesToRotations(m1->pulses[1])));
 			//Serial.println("\tRotations done since start M2: " + (String)(m2->pulsesToRotations(m2->pulses[1])));
 		} while(m1CanRun || m2CanRun);
-		
+		//Serial.println("Ended gyrate both!");
 		reset();
-		/*
-		unsigned int lastTime = millis();
-		while ((millis() - lastTime) < 100){
-			m1->stop_both();
-			m2->stop_both();
-		}
-		stop(200);
-		reset();*/
 	} else {
 		m1->walk(velocity);
 		m2->walk(velocity);
