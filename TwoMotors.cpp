@@ -35,25 +35,44 @@ void TwoMotors::together(float velocity, float rotations/* = 0*/){ // Para a mov
 		unsigned long 	startTime;
 		bool	m1CanRun = true,
 				m2CanRun = true;
-		/*		
-		bool accelTriangleM1 = ((pow(abs(velocity), 2)/(m1->getAcceleration()*60.0)) > abs(rotations)) ? true : false;
-		bool accelTriangleM2 = ((pow(abs(velocity), 2)/(m2->getAcceleration()*60.0)) > abs(rotations)) ? true : false;
+		
+		bool accelTriangleM1 = m1->isAccelerationTriangle(velocity, rotations, m1->getAcceleration());
+		bool accelTriangleM2 = m2->isAccelerationTriangle(velocity, rotations, m2->getAcceleration());
 		
 		bool	m1CanAccelerate, m2CanAccelerate;
+		
+		unsigned long m1accelerationTimeInMs = abs(velocity)/m1->getAcceleration() * 1000;
+		unsigned long m2accelerationTimeInMs = abs(velocity)/m2->getAcceleration() * 1000;
+		
+		long m1LastDesiredPulses = m1->rotationsToPulses(m1->getAcceleration()*pow((float)m1accelerationTimeInMs/1000.0,2.0))/120;
+		long m2LastDesiredPulses = m2->rotationsToPulses(m2->getAcceleration()*pow((float)m2accelerationTimeInMs/1000.0,2.0))/120;
 		
 		m1->accelerateProcess(1,1,1, true); // Resets time variable
 		m2->accelerateProcess(1,1,1, true); // Resets time variable
 		
 		startTime = millis();
-		Serial.println("Started accelerating both!");
+		//Serial.println("Started accelerating both!");
 		do{
 			m1CanAccelerate = m1->accelerateProcess(velocity, m1->getAcceleration(), startTime) && !accelTriangleM1;
 			m2CanAccelerate = m2->accelerateProcess(velocity, m2->getAcceleration(), startTime) && !accelTriangleM2;	
 		}while(m1CanAccelerate || m2CanAccelerate);
-		Serial.println("Ended accelerating both! Preparing to start gyrate() on both");
-		reset();
 		
-		*/	
+		startTime = millis();
+		
+		float m1RemeaningRotations = rotations - m1->pulsesToRotations(m1->pulses[1]);
+		float m2RemeaningRotations = rotations - m2->pulsesToRotations(m2->pulses[1]);
+		
+		if(velocity > 0){
+			m1->pulses[1] -= m1LastDesiredPulses; // pulses error from previous accelerate() is considered and charged in pulses[1]
+			m2->pulses[1] -= m2LastDesiredPulses;
+		} else {
+			m1->pulses[1] += m1LastDesiredPulses;
+			m2->pulses[1] += m2LastDesiredPulses;
+		}
+		//Serial.println("Ended accelerating both! Preparing to start gyrate() on both");
+		
+		//reset();
+					
 		m1->gyrate(1,1,1, true); // Resets time variable
 		m2->gyrate(1,1,1, true); // Resets time variable
 		startTime = millis();
@@ -61,14 +80,14 @@ void TwoMotors::together(float velocity, float rotations/* = 0*/){ // Para a mov
 		do{
 			//Serial.println(" 1-1 1-1 -1-M1 data below:");
 			if(m1CanRun){
-				m1CanRun = m1->gyrate(velocity, rotations, startTime);
+				m1CanRun = m1->gyrate(velocity, m1RemeaningRotations, startTime);
 			} else {
 				m1->stop();
 			}
 			//Serial.println("M1 can run: " + String(m1CanRun));
 			//Serial.println(" 2-2 2-2 -2-M2 data below:");
 			if(m2CanRun){
-				m2CanRun = m2->gyrate(velocity, rotations, startTime);
+				m2CanRun = m2->gyrate(velocity, m2RemeaningRotations, startTime);
 			} else {
 				m2->stop();
 			}
