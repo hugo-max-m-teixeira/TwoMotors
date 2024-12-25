@@ -52,6 +52,7 @@ void TwoMotors::together(float velocity, float rotations/* = 0*/){ // Para a mov
 		
 		startTime = millis();
 		//Serial.println("Started accelerating both!");
+		reset();
 		do{
 			m1CanAccelerate = m1->accelerateProcess(velocity, m1->getAcceleration(), startTime) && !accelTriangleM1;
 			m2CanAccelerate = m2->accelerateProcess(velocity, m2->getAcceleration(), startTime) && !accelTriangleM2;	
@@ -70,8 +71,6 @@ void TwoMotors::together(float velocity, float rotations/* = 0*/){ // Para a mov
 			m2->pulses[1] += m2LastDesiredPulses;
 		}
 		//Serial.println("Ended accelerating both! Preparing to start gyrate() on both");
-		
-		//reset();
 					
 		m1->gyrate(1,1,1, true); // Resets time variable
 		m2->gyrate(1,1,1, true); // Resets time variable
