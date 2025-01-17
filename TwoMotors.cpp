@@ -193,6 +193,8 @@ void TwoMotors::together(float velocity1, float rotations1, float velocity2, flo
 		remeaningPulsesError[1] = m2->pulses[1] - directionCoefficient[1]*m2LastDesiredPulses;
 
 		//Serial.println("Ended accelerating both! Preparing to start gyrate() on both");
+		m1RemeaningRotations -= m1->pulsesToRotations(-remeaningPulsesError[0]);
+		m2RemeaningRotations -= m2->pulsesToRotations(-remeaningPulsesError[1]);
 					
 		m1->gyrate(1,1,1, true); // Resets time variable
 		m2->gyrate(1,1,1, true); // Resets time variable
