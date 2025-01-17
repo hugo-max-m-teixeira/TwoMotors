@@ -15,8 +15,10 @@
 class TwoMotors{
 public:
 
-	DC_motor_controller* m1 =new DC_motor_controller();
-	DC_motor_controller* m2 =new DC_motor_controller();
+	//DC_motor_controller* m1 =new DC_motor_controller();
+	//DC_motor_controller* m2 =new DC_motor_controller();
+	DC_motor_controller** motor =new DC_motor_controller*[2];
+	
 
 	//TwoMotors(DC_motor_controller* motor1, DC_motor_controller* motor2);
 	//TwoMotors(DC_motor_controller &motor1, DC_motor_controller &motor2);
