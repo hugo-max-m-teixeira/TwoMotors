@@ -165,48 +165,11 @@ void TwoMotors::together(float velocity1, float rotations1, float velocity2, flo
 			
 			accelerationTimeInMs[i] = abs(velocity[i])/motor[i]->getAcceleration() * 1000;
 			
-			motor[i]->rotationsToPulses(motor[i]->getAcceleration()*pow((float)accelerationTimeInMs[i]/1000.0,2.0))/120;
+			lastDesiredPulses[i] = motor[i]->rotationsToPulses(motor[i]->getAcceleration()*pow((float)accelerationTimeInMs[i]/1000.0,2.0))/120;
 			
 			motor[i]->accelerateProcess(1,1,1, true); // Resets time variable
 		}
 
-		/*if(velocity1 < 0 || rotations1 < 0){
-			directionCoefficient[0] = -1;
-		} else {
-			directionCoefficient[0] = 1;
-		}
-
-		if(velocity2 < 0 || rotations2 < 0){
-			directionCoefficient[1] = -1;
-		} else {
-			directionCoefficient[1] = 1;
-		}*/
-		
-		/*bool accelTriangleM1 = m1->isAccelerationTriangle(velocity1, rotations1, m1->getAcceleration());
-		bool accelTriangleM2 = m2->isAccelerationTriangle(velocity2, velocity2, m2->getAcceleration());
-		*/
-		//bool	m1CanAccelerate, m2CanAccelerate;
-		
-		/*unsigned long m1accelerationTimeInMs = abs(velocity1)/m1->getAcceleration() * 1000;
-		unsigned long m2accelerationTimeInMs = abs(velocity2)/m2->getAcceleration() * 1000;
-		*/
-		/*bool 	m1AcceleRationTimeTooShort = m1accelerationTimeInMs <= m1->getAcceleration(),
-				m2AcceleRationTimeTooShort = m2accelerationTimeInMs <= m2->getAcceleration();
-		*/
-		/*if(m1accelerationTimeInMs <= m1->getRefreshTime()){
-			m1CanAccelerate = false;
-		}
-
-		if(m2accelerationTimeInMs <= m2->getRefreshTime()){
-			m2CanAccelerate = false;
-		}*/
-		
-		/*long m1LastDesiredPulses = m1->rotationsToPulses(m1->getAcceleration()*pow((float)m1accelerationTimeInMs/1000.0,2.0))/120;
-		long m2LastDesiredPulses = m2->rotationsToPulses(m2->getAcceleration()*pow((float)m2accelerationTimeInMs/1000.0,2.0))/120;
-		*//*
-		m1->accelerateProcess(1,1,1, true); // Resets time variable
-		m2->accelerateProcess(1,1,1, true); // Resets time variable
-		*/
 		startTime = millis();
 		Serial.println("Started accelerating both!");
 
@@ -221,32 +184,22 @@ void TwoMotors::together(float velocity1, float rotations1, float velocity2, flo
 		
 		startTime = millis();
 		
-		//float m1RemeaningRotations = rotations1 - m1->pulsesToRotations(m1->pulses[1]);
-		//float m2RemeaningRotations = rotations2 - m2->pulsesToRotations(m2->pulses[1]);
 		float remeaningRotations[2];
 		long remeaningPulsesError[2];
 		
 		for(int i=0; i<2; i++){
 			remeaningRotations[i] = rotations[i] - motor[i]->pulsesToRotations(motor[i]->pulses[1]);
+			//Serial.println("motor[" + String(i) + "] - Remeaning rotations: " + String(remeaningRotations[i]));
 			remeaningPulsesError[i] = motor[i]->pulses[1] - directionCoefficient[i]*lastDesiredPulses[i];
-			motor[i]->pulses[1] = remeaningPulsesError[i];
+			//Serial.println("motor[" + String(i) + "] - Remeaning pulses error: " + String(remeaningPulsesError[i]));
+			//motor[i]->gyrate(1,1,1, true); // Resets time variable
 		}
-		/*
-		remeaningPulsesError[0] = m1->pulses[1] - directionCoefficient[0]*m1LastDesiredPulses;
-		remeaningPulsesError[1] = m2->pulses[1] - directionCoefficient[1]*m2LastDesiredPulses;
-
-		//Serial.println("Ended accelerating both! Preparing to start gyrate() on both");
-		m1RemeaningRotations -= m1->pulsesToRotations(-remeaningPulsesError[0]);
-		m2RemeaningRotations -= m2->pulsesToRotations(-remeaningPulsesError[1]);
-		*/
+		
 		for(int i=0; i<2; i++){
 			motor[i]->gyrate(1,1,1, true); // Resets time variable
+			motor[i]->pulses[1] = remeaningPulsesError[i];
 		}
 
-		/*m1->pulses[1] = remeaningPulsesError[0];
-		m2->pulses[1] = remeaningPulsesError[1];
-		*/
-		//unsigned int pseudoElapsedTime = equivalentTimeInMs(velocity1, rotations1);
 		startTime = millis()/* - pseudoElapsedTime*/;
 		
 		do{
